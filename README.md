@@ -5,3 +5,4 @@ everything at my fingertips
 
 1. Install oh-my-zsh
 2. Install vim-plug
+3. brew install ack
