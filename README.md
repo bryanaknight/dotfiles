@@ -1,5 +1,5 @@
 # dotfiles
-everything at my fingertips!
+everything at my fingertips
 
 ## Installation
 
