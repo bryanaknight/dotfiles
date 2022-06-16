@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -e
+
+dir=$PWD
+if [[ ! "$dir/script/install" -ef "$0" ]]; then
+  echo "Please run 'script/install' from root folder"
+  exit 1
+fi
+
+# Symlink dotfiles
+
+# Get a list of all files in this directory that start with a dot.
+files="$(./file_list.sh)"
+
+for dotfile in $files; do
+
+  dotmatrix_path="$dir/$dotfile"
+  path="$HOME/$dotfile"
+
+  [ -e $dotmatrix_path ] || continue
+
+  if [ ! -L $path ]; then
+    echo "Symlinking $dotfile to $path"
+    ln -nfs $dotmatrix_path $path
+  else
+    echo -e "Skipping $dotfile \talready exists"
+  fi
+done
