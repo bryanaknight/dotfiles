@@ -3,10 +3,11 @@ set -e
 
 echo "[dotfiles] Setting up dotfiles..."
 
-dir=$PWD
-if [[ ! "$dir/script/install" -ef "$0" ]]; then
-  echo "Please run 'script/install' from root folder"
-  exit 1
+# Check if the dotfiles are cloned and if not clone them
+if [ -d ~/.dotfiles/ ]; then
+    echo "[dotfiles] ~/.dotfiles directory already exists! Make sure to git pull to ensure it is up to date"
+else
+    git clone https://github.com/bryanaknight/dotfiles.git ~/.dotfiles
 fi
 
 # Install Oh My Zsh
@@ -21,24 +22,44 @@ else
     sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 fi
 
+# TODO install vim plug
+
 # Symlink dotfiles
 
-# Get a list of all files in this directory that start with a dot.
-files="$(./file_list.sh)"
+# Link dotfiles
+if [[ "$OSTYPE" != "linux-gnu"* ]]; then
+    read -p "[dotfiles] Do you wish to link your dotfiles? (old ones will be backed up to ~/dotfiles_old) " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        mkdir -p ~/dotfiles_old
 
-for dotfile in $files; do
+        files=( ".vimrc" ".zshrc" )
 
-  dotmatrix_path="$dir/$dotfile"
-  path="$HOME/$dotfile"
+        for file in "${files[@]}"; do
+            if [ -f ~/$file ]; then
+                cp -L ~/$file ~/dotfiles_old/$file
+                rm -f ~/$file
+            fi
+            ln -s ~/.dotfiles/$file ~/$file
+        done
+    fi
 
-  [ -e $dotmatrix_path ] || continue
+else
+    echo "[dotfiles] Linking dotfiles"
+    mkdir -p ~/dotfiles_old
 
-  if [ ! -L $path ]; then
-    echo "Symlinking $dotfile to $path"
-    ln -nfs $dotmatrix_path $path
-  else
-    echo -e "Skipping $dotfile \talready exists"
-  fi
-done
+    files=( ".vimrc" ".zshrc" )
+
+    for file in "${files[@]}"; do
+        if [ -f ~/$file ]; then
+            cp -L ~/$file ~/dotfiles_old/$file
+            rm -f ~/$file
+        fi
+        ln -s ~/.dotfiles/$file ~/$file
+    done
+
+    echo "[dotfiles] Setting up auto-suggestions"
+    git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+fi
 
 echo "[dotfiles] Done setting up dotfiles..."
