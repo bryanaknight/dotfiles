@@ -2,12 +2,5 @@
 _everything at my fingertips_
 
 ## Installation
-
-1. Install oh-my-zsh
-2. Install vim-plug
-3. brew install ack
-4. run script/install
-
-### TODOs
-
-- brew install script
+- clone and run script/install
+- `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/bryanaknight/dotfiles/master/script/bootstrap)"`
