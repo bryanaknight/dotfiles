@@ -10,6 +10,44 @@ else
     git clone https://github.com/bryanaknight/dotfiles.git ~/.dotfiles
 fi
 
+# Homebrew
+if [[ "$OSTYPE" != "linux-gnu"* ]]; then
+    read -p "[dotfiles] Do you wish to install homebrew? " -n 1 -r
+    echo
+
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        # Install homebrew
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+        # Ensure homebrew is up to date
+        brew update
+        brew upgrade
+    fi
+
+    read -p "[dotfiles] Do you wish to install homebrew defaults? " -n 1 -r
+    echo
+
+    COUNTER=0
+
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        brew bundle --file=~/.dotfiles/Brewfile
+        ((COUNTER++))
+    fi
+
+    if [ "$COUNTER" -gt 0 ]; then
+        echo "[dotfiles] Cleaning up installers...."
+        brew cleanup
+    fi
+else
+    if ! [ -x "$(command -v zsh)" ]; then
+        echo "[dotfiles] Installing ZSH"
+        sudo apt install -o Dpkg::Options::="--force-confold" --force-yes -y zsh
+        sudo chsh -s $(which zsh)
+    else
+        echo "[dotfiles] ZSH already installed"
+    fi
+fi
+
 # Install Oh My Zsh
 if [[ "$OSTYPE" != "linux-gnu"* ]]; then
     read -p "[dotfiles] Do you wish to install Oh-My-ZSH? " -n 1 -r
