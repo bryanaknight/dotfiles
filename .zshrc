@@ -1,7 +1,7 @@
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
-export ZSH="$HOME/.oh-my-zsh"
+export OH_MY_ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="robbyrussell"
 
 # powerful plugins
@@ -19,7 +19,7 @@ plugins=(
   zsh-syntax-highlighting
 )
 
-source $ZSH/oh-my-zsh.sh
+source $OH_MY_ZSH/oh-my-zsh.sh
 
 # awesome aliases
 
