@@ -21,6 +21,9 @@ plugins=(
 
 source $ZSH/oh-my-zsh.sh
 
+# Custom prompt with dancer emoji 💃
+PROMPT='%(?:%{$fg_bold[green]%}💃 :%{$fg_bold[red]%}💃 )%{$fg[cyan]%}%c%{$reset_color%} $(git_prompt_info)'
+
 # awesome aliases
 
 # Git
