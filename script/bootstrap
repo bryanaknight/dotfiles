@@ -98,4 +98,32 @@ else
     git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 fi
 
+# Link VSCode settings/keybindings (macOS only)
+if [[ "$OSTYPE" != "linux-gnu"* ]]; then
+    read -p "[dotfiles] Do you wish to link your VSCode settings/keybindings? (old ones will be backed up to ~/dotfiles_old) " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        VSCODE_USER_DIR="$HOME/Library/Application Support/Code/User"
+        mkdir -p ~/dotfiles_old
+        mkdir -p "$VSCODE_USER_DIR"
+
+        vscode_files=( "settings.json" "keybindings.json" )
+
+        for file in "${vscode_files[@]}"; do
+            if [ -f "$VSCODE_USER_DIR/$file" ]; then
+                cp -L "$VSCODE_USER_DIR/$file" ~/dotfiles_old/$file
+                rm -f "$VSCODE_USER_DIR/$file"
+            fi
+            ln -s ~/.dotfiles/vscode/$file "$VSCODE_USER_DIR/$file"
+        done
+
+        if command -v code &> /dev/null; then
+            echo "[dotfiles] Installing VSCode extensions"
+            while read -r extension; do
+                code --install-extension "$extension"
+            done < ~/.dotfiles/vscode/extensions.txt
+        fi
+    fi
+fi
+
 echo "[dotfiles] Done setting up dotfiles..."
